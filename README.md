@@ -1,4 +1,5 @@
 # React Ticker Bar
+<img width="912" height="93" alt="image" src="https://github.com/user-attachments/assets/8c373cbe-1a2b-47fd-a510-25fd8ac35582" />
 
 A standalone React TypeScript ticker bar component that displays hardcoded stock data.
 
@@ -22,5 +23,4 @@ export default function App() {
   return <TickerBar />;
 }
 
-<img width="912" height="93" alt="image" src="https://github.com/user-attachments/assets/64716b26-4176-42c1-b6a9-a461288fd232" />
 
