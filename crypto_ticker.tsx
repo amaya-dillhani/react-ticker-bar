@@ -8,10 +8,6 @@ interface TickerItem {
     decimals: number;
 }
 
-export function isChangePositive(change: number): boolean {
-    return change > 0 || (change === 0 && !Object.is(change, -0));
-}
-
 export default function TickerBar() {
     const items: TickerItem[] = [
         { name: "HYPE", price: 44.09, change: 12.33, decimals: 2 },
@@ -39,11 +35,11 @@ export default function TickerBar() {
     };
 
     return (
-        <div className="relative border-y bg-white">
+        <div className="relative border-y bg-white px-8">
             {/* Left Arrow */}
             <button
                 onClick={() => scroll('left')}
-                className="absolute left-0 top-0 bottom-0 z-10 bg-gradient-to-r from-white to-transparent px-2 hover:from-gray-50"
+                className="absolute left-2 top-0 bottom-0 z-10 bg-gradient-to-r from-white to-transparent px-2 hover:from-gray-50"
                 aria-label="Scroll left"
             >
                 <ChevronLeft size={20} className="text-gray-600" />
@@ -63,32 +59,29 @@ export default function TickerBar() {
                         animation: isPaused ? 'none' : 'scroll 40s linear infinite'
                     }}
                 >
-                    {scrollingItems.map((item, i) => {
-                        const isPositive = isChangePositive(item.change);
-                        return (
-                            <div
-                                key={i}
-                                className="flex items-center gap-2 px-4 border-r border-gray-200 last:border-r-0"
+                    {scrollingItems.map((item, i) => (
+                        <div
+                            key={i}
+                            className="flex items-center gap-2 px-4 border-r border-gray-200 last:border-r-0"
+                        >
+                            <span className="font-semibold text-gray-800">{item.name}</span>
+                            <span className="text-gray-700">
+                                ${item.price.toFixed(item.decimals)}
+                            </span>
+                            <span
+                                className={`flex items-center gap-0.5 ${
+                                    item.change >= 0 ? "text-green-600" : "text-red-600"
+                                }`}
                             >
-                                <span className="font-semibold text-gray-800">{item.name}</span>
-                                <span className="text-gray-700">
-                                    ${item.price.toFixed(item.decimals)}
-                                </span>
-                                <span
-                                    className={`flex items-center gap-0.5 ${
-                                        isPositive ? "text-green-600" : "text-red-600"
-                                    }`}
-                                >
-                                    {isPositive ? (
-                                        <ArrowUpRight size={14} strokeWidth={2.5} />
-                                    ) : (
-                                        <ArrowDownRight size={14} strokeWidth={2.5} />
-                                    )}
-                                    {Math.abs(item.change).toFixed(2)}%
-                                </span>
-                            </div>
-                        );
-                    })}
+                                {item.change >= 0 ? (
+                                    <ArrowUpRight size={14} strokeWidth={2.5} />
+                                ) : (
+                                    <ArrowDownRight size={14} strokeWidth={2.5} />
+                                )}
+                                {Math.abs(item.change).toFixed(2)}%
+                            </span>
+                        </div>
+                    ))}
                 </div>
             </div>
 
