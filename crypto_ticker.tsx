@@ -1,8 +1,19 @@
 import React, { useState, useRef } from "react";
 import { ArrowUpRight, ArrowDownRight, ChevronLeft, ChevronRight } from "lucide-react";
 
+interface TickerItem {
+    name: string;
+    price: number;
+    change: number;
+    decimals: number;
+}
+
+export function isChangePositive(change: number): boolean {
+    return change > 0 || (change === 0 && !Object.is(change, -0));
+}
+
 export default function TickerBar() {
-    const items = [
+    const items: TickerItem[] = [
         { name: "HYPE", price: 44.09, change: 12.33, decimals: 2 },
         { name: "LINK", price: 18.0, change: 0.06, decimals: 2 },
         { name: "USDE", price: 0.9994, change: -0.0, decimals: 4 },
@@ -11,13 +22,13 @@ export default function TickerBar() {
         { name: "SUI", price: 2.5302, change: 0.42, decimals: 4 },
     ];
 
-    const scrollContainerRef = useRef(null);
-    const [isPaused, setIsPaused] = useState(false);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+    const [isPaused, setIsPaused] = useState<boolean>(false);
 
     // Duplicate items multiple times for seamless scrolling
     const scrollingItems = [...items, ...items, ...items, ...items];
 
-    const scroll = (direction) => {
+    const scroll = (direction: 'left' | 'right') => {
         if (scrollContainerRef.current) {
             const scrollAmount = 300;
             scrollContainerRef.current.scrollBy({
@@ -52,29 +63,32 @@ export default function TickerBar() {
                         animation: isPaused ? 'none' : 'scroll 40s linear infinite'
                     }}
                 >
-                    {scrollingItems.map((item, i) => (
-                        <div
-                            key={i}
-                            className="flex items-center gap-2 px-4 border-r border-gray-200 last:border-r-0"
-                        >
-                            <span className="font-semibold text-gray-800">{item.name}</span>
-                            <span className="text-gray-700">
-                                ${item.price.toFixed(item.decimals)}
-                            </span>
-                            <span
-                                className={`flex items-center gap-0.5 ${
-                                    item.change >= 0 ? "text-green-600" : "text-red-600"
-                                }`}
+                    {scrollingItems.map((item, i) => {
+                        const isPositive = isChangePositive(item.change);
+                        return (
+                            <div
+                                key={i}
+                                className="flex items-center gap-2 px-4 border-r border-gray-200 last:border-r-0"
                             >
-                                {item.change >= 0 ? (
-                                    <ArrowUpRight size={14} strokeWidth={2.5} />
-                                ) : (
-                                    <ArrowDownRight size={14} strokeWidth={2.5} />
-                                )}
-                                {Math.abs(item.change).toFixed(2)}%
-                            </span>
-                        </div>
-                    ))}
+                                <span className="font-semibold text-gray-800">{item.name}</span>
+                                <span className="text-gray-700">
+                                    ${item.price.toFixed(item.decimals)}
+                                </span>
+                                <span
+                                    className={`flex items-center gap-0.5 ${
+                                        isPositive ? "text-green-600" : "text-red-600"
+                                    }`}
+                                >
+                                    {isPositive ? (
+                                        <ArrowUpRight size={14} strokeWidth={2.5} />
+                                    ) : (
+                                        <ArrowDownRight size={14} strokeWidth={2.5} />
+                                    )}
+                                    {Math.abs(item.change).toFixed(2)}%
+                                </span>
+                            </div>
+                        );
+                    })}
                 </div>
             </div>
 
