@@ -21,3 +21,6 @@ import TickerBar from "./TickerBar";
 export default function App() {
   return <TickerBar />;
 }
+
+<img width="912" height="93" alt="image" src="https://github.com/user-attachments/assets/64716b26-4176-42c1-b6a9-a461288fd232" />
+
