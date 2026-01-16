@@ -20,6 +20,7 @@ export default function TickerBar() {
 
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const [isPaused, setIsPaused] = useState<boolean>(false);
+    const animationRef = useRef<number>(0);
 
     // Duplicate items multiple times for seamless scrolling
     const scrollingItems = [...items, ...items, ...items, ...items];
@@ -31,6 +32,30 @@ export default function TickerBar() {
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
                 behavior: 'smooth'
             });
+        }
+    };
+
+    const handleMouseEnter = () => {
+        setIsPaused(true);
+        if (scrollContainerRef.current) {
+            const container = scrollContainerRef.current.querySelector('div');
+            if (container) {
+                const computedStyle = window.getComputedStyle(container);
+                const matrix = new WebKitCSSMatrix(computedStyle.transform);
+                animationRef.current = matrix.m41;
+                (container as HTMLElement).style.transform = `translateX(${matrix.m41}px)`;
+                (container as HTMLElement).style.animation = 'none';
+            }
+        }
+    };
+
+    const handleMouseLeave = () => {
+        setIsPaused(false);
+        if (scrollContainerRef.current) {
+            const container = scrollContainerRef.current.querySelector('div');
+            if (container) {
+                (container as HTMLElement).style.animation = 'scroll 40s linear infinite';
+            }
         }
     };
 
@@ -49,14 +74,14 @@ export default function TickerBar() {
             <div
                 ref={scrollContainerRef}
                 className="overflow-x-auto scrollbar-hide"
-                onMouseEnter={() => setIsPaused(true)}
-                onMouseLeave={() => setIsPaused(false)}
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
                 <div 
                     className="flex whitespace-nowrap py-3"
                     style={{
-                        animation: isPaused ? 'none' : 'scroll 40s linear infinite'
+                        animation: 'scroll 40s linear infinite'
                     }}
                 >
                     {scrollingItems.map((item, i) => (
@@ -88,7 +113,7 @@ export default function TickerBar() {
             {/* Right Arrow */}
             <button
                 onClick={() => scroll('right')}
-                className="absolute right-0 top-0 bottom-0 z-10 bg-gradient-to-l from-white to-transparent px-2 hover:from-gray-50"
+                className="absolute right-2 top-0 bottom-0 z-10 bg-gradient-to-l from-white to-transparent px-2 hover:from-gray-50"
                 aria-label="Scroll right"
             >
                 <ChevronRight size={20} className="text-gray-600" />
